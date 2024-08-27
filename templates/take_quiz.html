@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Take Quiz</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <h1 class="text-center mb-4">Take Quiz</h1>
+    <form action="{{ url_for('submit_exam') }}" method="post">
+        <div class="card">
+            <div class="card-body">
+                {% for quiz in quizzes %}
+                <div class="mb-4">
+                    <p class="font-weight-bold">{{ quiz.question }}</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_{{ quiz.id }}" value="{{ quiz.choice1 }}" id="q{{ quiz.id }}_1">
+                        <label class="form-check-label" for="q{{ quiz.id }}_1">{{ quiz.choice1 }}</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_{{ quiz.id }}" value="{{ quiz.choice2 }}" id="q{{ quiz.id }}_2">
+                        <label class="form-check-label" for="q{{ quiz.id }}_2">{{ quiz.choice2 }}</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_{{ quiz.id }}" value="{{ quiz.choice3 }}" id="q{{ quiz.id }}_3">
+                        <label class="form-check-label" for="q{{ quiz.id }}_3">{{ quiz.choice3 }}</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_{{ quiz.id }}" value="{{ quiz.choice4 }}" id="q{{ quiz.id }}_4">
+                        <label class="form-check-label" for="q{{ quiz.id }}_4">{{ quiz.choice4 }}</label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4">Submit Quiz</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}

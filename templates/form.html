@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<form action="/save_quiz" method="post">
+    <div class="mb-3">
+        <label for="question" class="form-label">Question</label>
+        <input type="text" class="form-control" id="question" name="question" placeholder="Enter your question">
+    </div>
+
+    <div class="mb-3">
+        <label for="option1" class="form-label">Answer 01</label>
+        <input type="text" class="form-control" id="option1" name="option1" placeholder="Enter answer 01">
+    </div>
+
+    <div class="mb-3">
+        <label for="option2" class="form-label">Answer 02</label>
+        <input type="text" class="form-control" id="option2" name="option2" placeholder="Enter answer 02">
+    </div>
+
+    <div class="mb-3">
+        <label for="option3" class="form-label">Answer 03</label>
+        <input type="text" class="form-control" id="option3" name="option3" placeholder="Enter answer 03">
+    </div>
+
+    <div class="mb-3">
+        <label for="option4" class="form-label">Answer 04</label>
+        <input type="text" class="form-control" id="option4" name="option4" placeholder="Enter answer 04">
+    </div>
+
+    <div class="mb-3">
+        <label for="correct" class="form-label">Correct Answer</label>
+        <input type="text" class="form-control" id="correct" name="correct" placeholder="Enter the correct answer">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+{% endblock %}

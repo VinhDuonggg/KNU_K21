@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+<a href="/">back</a>
+<h1>All Quizzes</h1>
+{% for quiz in quizzes %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="card-title">{{ quiz.question }}</h3>
+        <ul class="list-group mb-3">
+            <li class="list-group-item">{{ quiz.choice1 }}</li>
+            <li class="list-group-item">{{ quiz.choice2 }}</li>
+            <li class="list-group-item">{{ quiz.choice3 }}</li>
+            <li class="list-group-item">{{ quiz.choice4 }}</li>
+        </ul>
+        <p class="card-text"><strong>Correct Answer:</strong> {{ quiz.answer }}</p>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock %}
