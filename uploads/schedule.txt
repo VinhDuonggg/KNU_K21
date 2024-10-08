@@ -1,0 +1,12 @@
+Problem-based Engineering Training Experiment : Computer Science & Engineering (College of Engineering Building 9 517)(Tue. 10A,10B Tue. 11A,11B Tue. 12A,12B)
+
+Operating Systems (IT University Building No. 5 (IT Convergence Hall) 348) (bld 415) 348 (Tue. 5B,6A,6B Thu. 7A,7B,8A)
+
+Intelligent Human-Computer Interface (IT College Building No. 1 (College of Engineering Building No. 10) 116) (Mon. 1A,1B,2A Fri. 2B,3A,3B)
+
+Algorithm 1 COMP0319-003 (IT University Building No. 5 (IT Convergence Hall) 345) (Tue. 7A,7B,8A Thu. 5B,6A,6B)
+
+Logic Circuits ELEC0247-012 (IT College Building No. 5 (IT Convergence Hall) B101) (Tue. 2B,3A,3B Thu. 1A,1B,2A)
+
+AI COMP0324-002 (IT대학5호관(IT융복합관) 342) (Mon. 8B,9A,9B Wed. 8B,9A,9B)
+

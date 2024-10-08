@@ -14,29 +14,35 @@
 <body>
 <div class="d-flex" id="wrapper">
     <!-- Sidebar-->
-    {% include 'parts/nav.html' %}
+    {% if current_user.is_authenticated %}
+        {% include 'parts/nav.html' %}
+    {% endif %}
     <!-- Page content wrapper-->
     <div id="page-content-wrapper">
         <!-- Top navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="sidebarToggle">Toggle Menu</button>
+                <button class="btn btn-primary" id="sidebarToggle"><img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/menu--v1.png" alt="menu--v1"/></button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item active"><a class="nav-link" href="#!">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Link</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('layout') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#!">Action</a>
+                                <a class="dropdown-item" href="{{ url_for('view_scores') }}">History</a>
                                 <a class="dropdown-item" href="#!">Another action</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#!">Something else here</a>
+                                {% if current_user.is_authenticated %}
+                                    <form action="{{ url_for('delete_user', user_id=current_user.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                                        <button type="submit" class="dropdown-item">Delete Account</button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </li>
                     </ul>

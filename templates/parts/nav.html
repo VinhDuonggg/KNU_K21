@@ -1,9 +1,12 @@
-    <div class="border-end bg-white" id="sidebar-wrapper">
-        <div class="sidebar-heading border-bottom bg-light">My Application</div>
-        <div class="list-group list-group-flush">
-            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('layout') }}">Home</a>
+<div class="border-end bg-white" id="sidebar-wrapper">
+    <a href="{{ url_for('layout') }}" class="sidebar-heading border-bottom bg-light text-decoration-none d-block p-3">My Application</a>
+    <div class="list-group list-group-flush">
+        {% if current_user.is_admin %}
             <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('submit_quiz') }}">New Question</a>
-            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_quiz') }}">View questions</a>
-            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('take_quiz') }}">Take Quiz </a>
-        </div>
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_quiz') }}">View Questions</a>
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_students') }}">Manage Student</a>
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('upload_questions') }}">Upload File</a>
+        {% endif %}
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('take_quiz') }}">Take Quiz</a>
     </div>
+</div>
