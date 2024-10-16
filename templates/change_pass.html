@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+<div class="container d-flex justify-content-center" style="height: 100vh; margin-top: 20px;">
+    <div class="col-md-6">
+        <h2 class="text-center">Profile Settings</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" value="{{ current_user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label for="old_password">Old Password</label>
+                <input type="password" id="old_password" name="old_password" class="form-control" required placeholder="Enter old password">
+            </div>
+            <div class="form-group">
+                <label for="password">New Password</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required placeholder="Confirm new password">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+        </form>
+        <p class="text-center mt-3"><a href="{{ url_for('layout') }}">Back to Home</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -10863,3 +10863,12 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
     margin-left: -15rem;
   }
 }
+body.dark-theme {
+    background-color: #343a40; /* Dark background */
+    color: #f8f9fa; /* Light text */
+}
+
+/* Optional: Style for links, buttons, etc. in dark mode */
+body.dark-theme a {
+    color: #61dafb; /* Example color for links */
+}

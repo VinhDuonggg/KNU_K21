@@ -5,29 +5,78 @@
     <meta charset="UTF-8">
     <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Adjust the size of the navbar toggler (menu button) */
+        .navbar-toggler {
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+        }
+
+        .navbar-toggler-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Center the registration form */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+
+        .form-container {
+            width: 400px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
+    <!-- Main content (without duplicated navbar) -->
     <div class="container">
-        <h2>Register</h2>
-        <form action="{{ url_for('register') }}" method="POST">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label for="admin_key">Admin Key (Optional)</label>
-                <input type="text" id="admin_key" name="admin_key">
-            </div>
-            {% if error %}
-                <p class="error">{{ error }}</p>
-            {% endif %}
-            <button type="submit">Register</button>
-        </form>
-        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+        <div class="form-container">
+            <h2>Register</h2>
+            <form action="{{ url_for('register') }}" method="POST">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin_key">Admin Key (Optional)</label>
+                    <input type="text" id="admin_key" name="admin_key" class="form-control">
+                </div>
+                {% if error %}
+                    <p class="error">{{ error }}</p>
+                {% endif %}
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+        </div>
     </div>
 </body>
 </html>

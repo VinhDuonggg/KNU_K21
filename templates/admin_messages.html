@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin Messages</h2>
+
+    <!-- Clear Messages Button -->
+    <form action="{{ url_for('clear_messages') }}" method="POST" class="mb-3">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all messages? This action cannot be undone.');">
+            Clear All Messages
+        </button>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Username</th>
+                <th>Message</th>
+                <th>Admin Reply</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+            <tr>
+                <td>{{ message.username }}</td>
+                <td>{{ message.content }}</td>
+                <td>{{ message.admin_reply if message.admin_reply else 'No reply yet' }}</td>
+                <td>
+                    {% if not message.admin_reply %}
+                    <form action="{{ url_for('reply_message', message_id=message.id) }}" method="POST">
+                        <div class="form-group">
+                            <textarea name="admin_reply" class="form-control" placeholder="Type your reply here..." rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Reply</button>
+                    </form>
+                    {% else %}
+                    <span class="text-success">Replied</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

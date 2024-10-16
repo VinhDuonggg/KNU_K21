@@ -17,6 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///quiz.db'
 app.config['SQLALCHEMY_BINDS'] = {
     'user': 'sqlite:///database.db'
 }
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///messages.db'  # Use the appropriate database URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -90,7 +91,11 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
         admin_key = request.form.get('admin_key')  # Additional field for admin registration
+
+        if password != confirm_password:
+            return render_template('register.html', error='Passwords do not match.')
 
         user = User.query.filter_by(username=username).first()
         if user:
@@ -379,6 +384,132 @@ def modify_question(question_id):
 
     # If GET request, render the form pre-populated with the existing question data
     return render_template('modify_question.html', question=question)
+
+
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_login import current_user  # Assuming you're using Flask-Login
+from werkzeug.security import generate_password_hash, check_password_hash
+
+@app.route('/profile_settings', methods=['GET', 'POST'])
+@login_required
+def profile_settings():
+    if request.method == 'POST':
+        # Get the updated information from the form
+        username = request.form['username']
+        old_password = request.form['old_password']  # Get the old password
+        password = request.form.get('password')  # New password
+        confirm_password = request.form.get('confirm_password')  # Confirm password
+
+        # Check if the old password is correct
+        if not current_user.check_password(old_password):
+            flash('Old password is incorrect.', 'danger')
+            return redirect(url_for('profile_settings'))
+
+        # Update user details in the database
+        current_user.username = username
+
+        # Check if the new password fields are filled and match
+        if password and password == confirm_password:
+            current_user.set_password(password)  # Update the password
+        else:
+            flash('Passwords do not match or are not provided.', 'danger')
+            return redirect(url_for('profile_settings'))
+
+        # Commit changes to the database
+        db.session.commit()  # Uncomment if using a database
+
+        flash('Password updated successfully!', 'success')
+        return redirect(url_for('profile_settings'))
+
+    return render_template('change_pass.html')
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    admin_reply = db.Column(db.Text, nullable=True)  # New field for the admin reply
+
+
+    def __repr__(self):
+        return f"<Message from {self.username}>"
+
+@app.route('/help')
+
+def help_page():
+    return render_template('help.html')
+from flask import request, flash, redirect, url_for
+
+@app.route('/send_message', methods=['POST'])
+
+def send_message():
+    user_username = request.form['user_username']
+    message = request.form['message']
+
+    # Save the message to the database
+    new_message = Message(username=user_username, content=message)
+    db.session.add(new_message)
+    db.session.commit()
+
+    flash('Your message has been sent to the support team!', 'success')
+    return redirect(url_for('help_page'))  # Adjust to redirect to the appropriate page
+
+@app.route('/contact_admin')
+
+def contact_admin():
+    return render_template('contact_admin.html')  # Create this template to display contact information or a form
+
+
+@app.route('/view_messages', methods=['GET', 'POST'])
+@login_required  # Ensure the user is logged in
+def view_user_messages():
+    if request.method == 'POST':
+        user_username = current_user.username  # Get the logged-in user's username
+        message_content = request.form['message']  # Get the message content from the form
+
+        # Save the message to the database
+        new_message = Message(username=user_username, content=message_content)
+        db.session.add(new_message)
+        db.session.commit()
+
+        flash('Your message has been sent to the admin!', 'success')
+        return redirect(url_for('view_user_messages'))  # Redirect to the same page to show the updated list
+
+    messages = Message.query.filter_by(username=current_user.username).all()  # Fetch messages for the logged-in user
+    return render_template('user_messages.html', messages=messages)
+
+
+@app.route('/admin_messages')
+@admin_required
+def view_admin_messages():
+    messages = Message.query.all()
+    return render_template('admin_messages.html', messages=messages)
+
+
+@app.route('/reply_message/<int:message_id>', methods=['POST'])
+@login_required
+def reply_message(message_id):
+    message = Message.query.get_or_404(message_id)  # Get the message by ID
+    reply = request.form['admin_reply']  # Get the reply from the form
+
+    message.admin_reply = reply  # Set the admin reply
+    db.session.commit()  # Save to the database
+
+    flash('Reply sent to the user!', 'success')
+    return redirect(url_for('view_admin_messages'))  # Redirect back to the admin messages page
+
+@app.route('/clear_messages', methods=['POST'])
+@login_required
+@admin_required
+def clear_messages():
+    try:
+        Message.query.delete()  # Delete all messages
+        db.session.commit()  # Commit the changes
+        flash('All messages have been cleared successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()  # Rollback in case of error
+        flash(f'Error clearing messages: {e}', 'danger')
+    return redirect(url_for('view_admin_messages'))  # Redirect back to the admin messages page
+
 
 
 if __name__ == '__main__':

@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Messages</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Message</th>
+                <th>Admin Reply</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+            <tr>
+                <td>{{ message.content }}</td>
+                <td>{{ message.admin_reply if message.admin_reply else 'No reply yet' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-5">Send a Message to Admin</h3>
+    <form method="POST">
+        <div class="form-group">
+            <textarea name="message" class="form-control" placeholder="Type your message here..." rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+</div>
+{% endblock %}

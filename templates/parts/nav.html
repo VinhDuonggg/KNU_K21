@@ -4,7 +4,7 @@
         {% if current_user.is_admin %}
             <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('submit_quiz') }}">New Question</a>
             <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_quiz') }}">View Questions</a>
-            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_students') }}">Manage Student</a>
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_students') }}">Manage Students</a>
             <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('upload_questions') }}">Upload File</a>
         {% endif %}
         <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('take_quiz') }}">Take Quiz</a>
