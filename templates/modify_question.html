@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modify Question</title>
+</head>
+<body>
+    <h1>Modify Question</h1>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="question">Question:</label>
+            <input type="text" class="form-control" id="question" name="question" value="{{ question.question }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="choice1">Choice 1:</label>
+            <input type="text" class="form-control" id="choice1" name="choice1" value="{{ question.choice1 }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="choice2">Choice 2:</label>
+            <input type="text" class="form-control" id="choice2" name="choice2" value="{{ question.choice2 }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="choice3">Choice 3:</label>
+            <input type="text" class="form-control" id="choice3" name="choice3" value="{{ question.choice3 }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="choice4">Choice 4:</label>
+            <input type="text" class="form-control" id="choice4" name="choice4" value="{{ question.choice4 }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="answer">Correct Answer:</label>
+            <input type="text" class="form-control" id="answer" name="answer" value="{{ question.answer }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Question</button>
+        <a href="{{ url_for('view_quiz') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</body>
+</html>
+{% endblock %}

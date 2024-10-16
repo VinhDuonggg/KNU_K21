@@ -31,6 +31,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(150), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)  # Add this line
 
+    # Add cascade to delete user's scores when user is deleted
+    quiz_scores = db.relationship('QuizScore', backref='user', lazy=True, cascade="all, delete-orphan")
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -40,8 +43,8 @@ class User(UserMixin, db.Model):
 class QuizScore(db.Model):
     __bind_key__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('quiz_scores', lazy=True))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"), nullable=False)
+    #user = db.relationship('User', backref=db.backref('quiz_scores', lazy=True))
     score = db.Column(db.Integer, nullable=False)
     date_taken = db.Column(db.DateTime, default=lambda: datetime.utcnow().replace(tzinfo=pytz.UTC))
 
@@ -109,20 +112,18 @@ def register():
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
-    if current_user.id != user_id:
-        flash('You do not have permission to delete this account.')
-        return redirect(url_for('layout'))
-
     user = User.query.get(user_id)
     if user:
         db.session.delete(user)
         db.session.commit()
         flash('Your account has been deleted successfully.')
-        logout_user()  # Log out the user after deleting their account
+        if current_user.id == user_id:
+            logout_user()  # Log out the user after deleting their account
         return redirect(url_for('login'))
     else:
         flash('User not found.')
         return redirect(url_for('layout'))
+
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -239,12 +240,64 @@ def delete_quiz(quiz_id):
         flash('Quiz not found.')
     return redirect(url_for('view_quiz'))
 
-@app.route('/manage_students', methods=['GET'])
+@app.route('/manage_students', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def manage_students():
     users = User.query.all()
+
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        action = request.form.get('action')
+
+        user = User.query.get(user_id)
+        if not user:
+            flash("User not found.")
+            return redirect(url_for('manage_students'))
+
+        if action == 'delete':
+            # Delete the user
+            db.session.delete(user)
+            db.session.commit()
+            flash(f'User {user.username} has been deleted successfully.')
+        elif action == 'change_password':
+            new_password = request.form.get('new_password')
+            if new_password:
+                user.set_password(new_password)
+                db.session.commit()
+                flash(f'Password for {user.username} has been updated.')
+            else:
+                flash("New password cannot be empty.")
+
     return render_template('manage_students.html', users=users)
+
+@app.route('/admin_delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def admin_delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully.')
+    return redirect(url_for('manage_students'))
+
+@app.route('/change_password/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def change_password(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        flash("User not found.")
+        return redirect(url_for('manage_students'))
+
+    new_password = request.form.get('new_password')
+    if new_password:
+        user.set_password(new_password)
+        db.session.commit()
+        flash(f"Password for {user.username} has been updated.")
+    else:
+        flash("New password cannot be empty.")
+    return redirect(url_for('manage_students'))
+
 
 @app.route('/upload_questions', methods=['GET', 'POST'])
 @login_required
@@ -279,6 +332,53 @@ def upload_questions():
                 flash(f"Error reading the file: {e}")
             return redirect(url_for('view_quiz'))
     return render_template('upload_file.html')
+
+@app.route('/modify_question/<int:question_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def modify_question(question_id):
+    # Fetch the question by its ID
+    question = Quiz.query.get_or_404(question_id)
+
+    if request.method == 'POST':
+        # Get form data from the user to modify the question
+        question_text = request.form.get('question')
+        choice1 = request.form.get('choice1')
+        choice2 = request.form.get('choice2')
+        choice3 = request.form.get('choice3')
+        choice4 = request.form.get('choice4')
+        answer = request.form.get('answer')
+        pass
+
+        # Validate input (you can add more validation here if needed)
+        if not question_text or not choice1 or not choice2 or not choice3 or not choice4 or not answer:
+            flash('All fields are required!')
+            return redirect(url_for('modify_question', question_id=question_id))
+
+        if answer not in [choice1, choice2, choice3, choice4]:
+            flash('The answer must be one of the choices!')
+            return redirect(url_for('modify_question', question_id=question_id))
+
+        # Update the question's details
+        question.question = question_text
+        question.choice1 = choice1
+        question.choice2 = choice2
+        question.choice3 = choice3
+        question.choice4 = choice4
+        question.answer = answer
+
+        # Commit changes to the database
+        try:
+            db.session.commit()
+            flash('Question updated successfully!')
+            return redirect(url_for('view_quiz'))  # Redirect to the quiz list or view page
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating question: {e}')
+            return redirect(url_for('modify_question', question_id=question_id))
+
+    # If GET request, render the form pre-populated with the existing question data
+    return render_template('modify_question.html', question=question)
 
 
 if __name__ == '__main__':

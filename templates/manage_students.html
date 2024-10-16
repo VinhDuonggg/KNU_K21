@@ -5,14 +5,36 @@
 <head>
     <meta charset="utf-8">
     <title>Manage Students</title>
+    <style>
+        .action-btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .password-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        .primary-btn {
+            background-color: #3498db;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <h1>Manage Students</h1>
-    <table class="table table-striped">
+    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%;">
         <thead>
             <tr>
                 <th>Username</th>
                 <th>Scores</th>
+                <th>Actions</th> <!-- New column for actions (Delete and Change Password) -->
             </tr>
         </thead>
         <tbody>
@@ -30,11 +52,24 @@
                         No scores available
                     {% endif %}
                 </td>
+                <td>
+                    <!-- Delete User -->
+                    <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                    </form>
+
+                    <!-- Change Password -->
+                    <form action="{{ url_for('change_password', user_id=user.id) }}" method="POST" style="display:inline;">
+                        <input type="password" name="new_password" placeholder="New Password" required>
+                        <button type="submit" class="action-btn password-btn">Change Password</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a href="{{ url_for('layout') }}">Back to Home</a>
+    <br>
+    <a href="{{ url_for('layout') }}" class="action-btn primary-btn">Back to Home</a>
 </body>
 </html>
 {% endblock %}
